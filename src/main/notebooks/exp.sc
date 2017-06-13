@@ -1,3 +1,5 @@
+import scalashop.Img
+
 val teste = Seq((1,2), (2,3),(4,5))
 
 teste.foldLeft((0, 0)) { case ((accA, accB), (a, b)) => (accA + a, accB + b) }
@@ -31,16 +33,15 @@ for (t <- 1 to 5) {
 
 
 val width = 45
-val tips = (0 to width).by(6)
-tips zip tips.tail :+ width
+
 //++ Range(width)
 
-val yourVariable = Task { 5 + 2 }
+//val tips = (0 to 32).by(32/3)
+//val tupleTips = tips zip tips.tail :+ 32
+
+val numTasks = 42
+val src = new Img(42, 42)
+val tupleTips = for (t<-1 to numTasks) yield ((t - 1) * src.height / numTasks, t * src.height / numTasks )
 
 
-
-
-
-
-
-
+tupleTips.length

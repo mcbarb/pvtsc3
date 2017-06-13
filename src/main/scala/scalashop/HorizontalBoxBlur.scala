@@ -56,10 +56,10 @@ object HorizontalBoxBlur {
    */
   def parBlur(src: Img, dst: Img, numTasks: Int, radius: Int): Unit =  {
     // TODO implement using the `task` construct and the `blur` method
-    val tips = (0 to src.height).by(6)
-    val tupleTips = tips zip tips.tail :+ src.height
+    //    val tips = (0 to src.height).by(src.height/numTasks)
+    //    val tupleTips = tips zip tips.tail :+ src.height
+    val tupleTips = for (t<-1 to numTasks) yield ((t - 1) * src.height / numTasks, t * src.height / numTasks )
     val tasks = for ((f,t) <- tupleTips) yield { task { blur(src,dst,f,t,radius) } }
     for (t <- tasks) {t.join}
   }
-
 }

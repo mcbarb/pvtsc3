@@ -57,8 +57,9 @@ object VerticalBoxBlur {
    */
   def parBlur(src: Img, dst: Img, numTasks: Int, radius: Int): Unit = {
     // TODO implement using the `task` construct and the `blur` method
-    val tips = (0 to src.width).by(6)
-    val tupleTips = tips zip tips.tail :+ src.width
+    //    val tips = (0 to src.width).by(src.width/numTasks)
+    //    val tupleTips = tips zip tips.tail :+ src.width
+    val tupleTips = for (t<-1 to numTasks) yield ((t - 1) * src.width / numTasks, t * src.width / numTasks )
     val tasks = for ((f,t) <- tupleTips) yield { task { blur(src,dst,f,t,radius) } }
     for (t <- tasks) {t.join}
   }
