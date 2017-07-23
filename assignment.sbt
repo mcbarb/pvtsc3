@@ -1,4 +1,5 @@
 course := "parprog1"
 // assignment := "scalashop"
-//assignment := "reductions"
-assignment := "kmeans"
+// assignment := "reductions"
+// assignment := "kmeans"
+assignment := "barneshut"
