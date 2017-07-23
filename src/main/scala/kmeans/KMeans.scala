@@ -1,10 +1,10 @@
 package kmeans
 
+import org.scalameter._
+
 import scala.annotation.tailrec
 import scala.collection._
 import scala.util.Random
-import org.scalameter._
-import common._
 
 class KMeans {
 
@@ -43,7 +43,11 @@ class KMeans {
   }
 
   def classify(points: GenSeq[Point], means: GenSeq[Point]): GenMap[Point, GenSeq[Point]] = {
-    ???
+    var m = points.groupBy(p => findClosest(p, means))
+    for (mean <- means) yield { m.get(mean) match {
+      case None => m += (mean -> GenSeq())
+      case Some(e) => {} } }
+    m
   }
 
   def findAverage(oldMean: Point, points: GenSeq[Point]): Point = if (points.length == 0) oldMean else {
@@ -59,16 +63,17 @@ class KMeans {
   }
 
   def update(classified: GenMap[Point, GenSeq[Point]], oldMeans: GenSeq[Point]): GenSeq[Point] = {
-    ???
+    oldMeans.map(m => findAverage(m,classified(m)))
   }
 
   def converged(eta: Double)(oldMeans: GenSeq[Point], newMeans: GenSeq[Point]): Boolean = {
-    ???
+    (for (i <- 0 until oldMeans.length) yield { newMeans(i).squareDistance(oldMeans(i)) <= eta }).reduce(_ && _)
   }
 
   @tailrec
   final def kMeans(points: GenSeq[Point], means: GenSeq[Point], eta: Double): GenSeq[Point] = {
-    if (???) kMeans(???, ???, ???) else ??? // your implementation need to be tail recursive
+    val newMeans = update(classify(points,means),means)
+    if (!converged(eta)(means,newMeans)) kMeans(points,newMeans,eta) else newMeans // your implementation need to be tail recursive
   }
 }
 
