@@ -1,14 +1,11 @@
 package barneshut
 
-import java.util.concurrent._
-import scala.collection._
-import org.scalatest.FunSuite
 import org.junit.runner.RunWith
+import org.scalatest.FunSuite
 import org.scalatest.junit.JUnitRunner
-import common._
+
+import scala.collection._
 import scala.math._
-import scala.collection.parallel._
-import barneshut.conctrees.ConcBuffer
 
 @RunWith(classOf[JUnitRunner])
 class BarnesHutSuite extends FunSuite {
@@ -40,6 +37,32 @@ import FloatOps._
     assert(quad.massX ~= 18f, s"${quad.massX} should be 18f")
     assert(quad.massY ~= 26f, s"${quad.massY} should be 26f")
     assert(quad.total == 1, s"${quad.total} should be 1")
+  }
+
+  test("Leaf with 2 body (created manually...)") {
+    val b1 = new Body(123f, 18f, 26f, 0f, 0f)
+    val b2 = new Body(51f, 16f, 25.5f, 0f, 0f)
+    val quad = Leaf(17.5f, 27.5f, 5f, Seq(b1,b2))
+
+    assert(quad.mass ~= 174f, s"${quad.mass} should be 174f")
+    assert(quad.massX ~= 17.4138f, s"${quad.massX} should be 17.4f")
+    assert(quad.massY ~= 25.8534f, s"${quad.massY} should be 25.8f")
+    assert(quad.total == 2, s"${quad.total} should be 2")
+  }
+
+  test("Fork with 2 body (created with insert...)") {
+    val b1 = new Body(123f, 18f, 26f, 0f, 0f)
+    val b2 = new Body(51f, 16f, 25.5f, 0f, 0f)
+    val empty = Empty(17.5f, 27.5f, 5f)
+    val leaf = empty.insert(b1)
+    val fork = leaf.insert(b2)
+    assert(empty.isInstanceOf[Empty], s"Empty case type fail")
+    assert(leaf.isInstanceOf[Leaf], s"Leaf case type fail")
+    assert(fork.isInstanceOf[Fork], s"Fork case type fail")
+    assert(fork.mass ~= 174f, s"${fork.mass} should be 174f")
+    assert(fork.massX ~= 17.4138f, s"${fork.massX} should be 17.4f")
+    assert(fork.massY ~= 25.8534f, s"${fork.massY} should be 25.8f")
+    assert(fork.total == 2, s"${fork.total} should be 2")
   }
 
 
