@@ -1,5 +1,5 @@
-import common._
 import barneshut.conctrees._
+import common._
 
 package object barneshut {
 
@@ -84,7 +84,7 @@ package object barneshut {
     val total: Int = bodies.length
     def insert(b: Body): Quad = {
       if (size > minimumSize) {
-        (bodies :+ b).foldLeft(Fork(
+        (bodies :+ b).foldLeft(new Fork(
           Empty(centerX - size / 2, centerY + size / 2, size / 2),
           Empty(centerX + size / 2, centerY + size / 2, size / 2),
           Empty(centerX - size / 2, centerY - size / 2, size / 2),
@@ -181,14 +181,27 @@ package object barneshut {
     for (i <- 0 until matrix.length) matrix(i) = new ConcBuffer
 
     def +=(b: Body): SectorMatrix = {
-      ???
+      def roundDown(x: Float): Int = math.floor(x).toInt
+
+      def norm(minZ: Float, maxZ: Float, z: Float): (Int,Int,Int) = {
+        val min = 0
+        val max = roundDown((maxZ - minZ) / sectorSize)
+        val i = math.min( max, math.max( min, roundDown( (z - minZ)/sectorSize) ))
+        (min, max, i)
+      }
+      val (minI, maxI, i) = norm(boundaries.minX,boundaries.maxX,b.x)
+      val (minJ, maxJ, j) = norm(boundaries.minY,boundaries.maxY,b.y)
+
+      this(i,j) += b
       this
     }
 
     def apply(x: Int, y: Int) = matrix(y * sectorPrecision + x)
 
     def combine(that: SectorMatrix): SectorMatrix = {
-      ???
+      val sm = new SectorMatrix(boundaries, sectorPrecision)
+      for (i <- 0 until sm.matrix.length) sm.matrix(i) = this.matrix(i).combine(that.matrix(i))
+      sm
     }
 
     def toQuad(parallelism: Int): Quad = {

@@ -135,6 +135,23 @@ import FloatOps._
     assert(res, s"Body not found in the right sector")
   }
 
+  test("'SectorMatrix.combine' should have two bodies at (25,47) to the correct bucket of a sector matrix of size 96") {
+    val body = new Body(5, 25, 47, 0.1f, 0.1f)
+    val body2 = new Body(10, 29, 47, 0.1f, 0.1f)
+    val boundaries = new Boundaries()
+    boundaries.minX = 1
+    boundaries.minY = 1
+    boundaries.maxX = 97
+    boundaries.maxY = 97
+    val sm = new SectorMatrix(boundaries, SECTOR_PRECISION)
+    val sm2 = new SectorMatrix(boundaries, SECTOR_PRECISION)
+    sm += body
+    sm2 += body2
+    val sm3 = sm.combine(sm2)
+    val res = sm3(2, 3).size == 2 && sm3(2, 3).find(_ == body).isDefined && sm3(2, 3).find(_ == body2).isDefined
+    assert(res, s"Both bodies found in the right sector")
+  }
+
 }
 
 object FloatOps {
